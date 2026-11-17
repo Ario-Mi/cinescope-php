@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root response="True">
+    <movie title="The Godfather" year="1972" rated="R" released="24 Mar 1972" runtime="175 min"
+        genre="Crime, Drama" director="Francis Ford Coppola"
+        writer="Mario Puzo, Francis Ford Coppola" actors="Marlon Brando, Al Pacino, James Caan"
+        plot="The Godfather &amp;quot;Don&amp;quot; Vito Corleone is the head of the Corleone mafia family in New York. He is at the event of his daughter's wedding. Michael, Vito's youngest son and a decorated WWII Marine is also present at the wedding. Michael seems to be uninterested in being a part of the family business. Vito is a powerful man, and is kind to all those who give him respect but is ruthless against those who do not. But when a powerful and treacherous rival wants to sell drugs and needs the Don's influence for the same, Vito refuses to do it. What follows is a clash between Vito's fading old values and the new ways which may cause Michael to do the thing he was most reluctant in doing and wage a mob war against all the other mafia families which could tear the Corleone family apart."
+        language="English, Italian, Latin" country="United States"
+        awards="Won 3 Oscars. 31 wins &amp; 31 nominations total"
+        poster="https://m.media-amazon.com/images/M/MV5BNGEwYjgwOGQtYjg5ZS00Njc1LTk2ZGEtM2QwZWQ2NjdhZTE5XkEyXkFqcGc@._V1_QL75_UY562_CR8,0,380,562_.jpg"
+        metascore="100" imdbRating="9.2" imdbVotes="2,222,804" imdbID="tt0068646" type="movie" />
+</root>

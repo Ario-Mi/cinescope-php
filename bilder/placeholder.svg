@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+  <rect width="300" height="450" fill="#292524"/>
+  <rect x="8" y="8" width="284" height="434" fill="none" stroke="#F5B027" stroke-width="2"/>
+  <text x="150" y="220" fill="#F5B027" font-family="Times New Roman" font-size="28" text-anchor="middle">NO POSTER</text>
+  <text x="150" y="255" fill="#F5B027" font-family="Times New Roman" font-size="18" text-anchor="middle">CineScope</text>
+</svg>
+

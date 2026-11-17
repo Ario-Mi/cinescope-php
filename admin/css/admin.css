@@ -1,0 +1,160 @@
+:root {
+    --bg: #292524;
+    --bg-2: #1f1c1a;
+    --panel: #34302e;
+    --panel-soft: #3f3a37;
+    --text: #f6e2b0;
+    --muted: #d6c59c;
+    --line: rgba(194, 135, 23, 0.55);
+    --accent: #c28717;
+    --accent-2: #a96f10;
+    --ok: #a6f4b1;
+    --bad: #ff9e9e;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    background: linear-gradient(130deg, var(--bg) 0%, var(--bg-2) 100%);
+    color: var(--text);
+}
+
+.page-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-box {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--accent);
+    border-radius: 0;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+
+.hero-box h1 {
+    margin: 0 0 6px;
+    font-size: 26px;
+    color: var(--accent);
+}
+
+.hero-box p {
+    margin: 0;
+}
+
+.box {
+    max-width: 520px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.liste-box {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 14px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+
+h2 {
+    margin: 0 0 12px;
+    font-size: 20px;
+    color: var(--accent);
+}
+
+.zeile {
+    margin-bottom: 12px;
+}
+
+.fehler {
+    color: var(--bad);
+    font-weight: 600;
+}
+
+.meldung {
+    color: var(--ok);
+    font-weight: 600;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+input,
+button {
+    font: inherit;
+}
+
+input {
+    width: 100%;
+    max-width: 440px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    background: #fdf7e8;
+    color: #1f1f1f;
+}
+
+button {
+    border: 1px solid var(--accent);
+    border-radius: 0;
+    background: var(--accent);
+    color: #2b241e;
+    font-weight: 600;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--accent);
+}
+
+.inline-form {
+    display: inline-block;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.admin-tabelle {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+}
+
+.admin-tabelle th,
+.admin-tabelle td {
+    border: 1px solid var(--line);
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.admin-tabelle th {
+    background: var(--panel-soft);
+    color: var(--accent);
+}
+
+.admin-tabelle tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 560px) {
+    body {
+        padding: 12px;
+    }
+}

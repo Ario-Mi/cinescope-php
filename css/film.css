@@ -1,0 +1,225 @@
+﻿.site-logo-top {
+    max-width: 1200px;
+    margin: 0 auto 10px;
+    text-align: center;
+}
+
+.site-logo-top a {
+    display: inline-block;
+    border: none;
+    padding: 0;
+}
+
+.site-logo-top img {
+    width: 280px;
+    max-width: 78vw;
+    max-height: 110px;
+    height: auto;
+    display: block;
+}
+:root {
+    --gold: #F5B027;
+    --gold-soft: #ffe3a8;
+    --dark: #292524;
+    --dark-2: #1e1a18;
+    --panel: rgba(35, 31, 29, 0.9);
+    --panel-2: rgba(45, 40, 37, 0.86);
+    --line: rgba(245, 176, 39, 0.48);
+    --ok: #9effa0;
+    --bad: #ff8b8b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    margin: 0;
+    padding: 24px;
+    min-height: 100vh;
+    color: var(--gold-soft);
+    background:
+        radial-gradient(circle at 8% 10%, rgba(245, 176, 39, 0.15) 0%, transparent 30%),
+        radial-gradient(circle at 84% 16%, rgba(245, 176, 39, 0.1) 0%, transparent 28%),
+        linear-gradient(130deg, var(--dark) 0%, var(--dark-2) 100%);
+}
+
+.page-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.hero-box {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background:
+        linear-gradient(160deg, rgba(245, 176, 39, 0.12) 0%, transparent 55%),
+        var(--panel);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+h1,
+h2 {
+    font-family: "Cambria", "Palatino Linotype", "Book Antiqua", serif;
+}
+
+.top-nav {
+    max-width: 1100px;
+    margin: 0 auto 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel-2);
+    padding: 10px;
+}
+
+.top-nav a {
+    display: inline-block;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 13px;
+    transition: all 0.2s ease;
+}
+
+.top-nav a:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+    background: rgba(245, 176, 39, 0.17);
+}
+
+a {
+    color: var(--gold);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.zurueck {
+    margin-bottom: 16px;
+}
+
+.fehler {
+    color: var(--bad);
+    font-weight: bold;
+}
+
+.meldung {
+    color: var(--ok);
+    font-weight: bold;
+}
+
+.titel {
+    margin-bottom: 14px;
+    color: var(--gold);
+}
+
+.poster-box {
+    margin: 0 0 16px;
+}
+
+.poster {
+    width: 280px;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #131211;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+}
+
+.details {
+    max-width: 980px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background:
+        linear-gradient(165deg, rgba(245, 176, 39, 0.1) 0%, transparent 42%),
+        var(--panel);
+    padding: 14px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+
+.details p {
+    margin: 8px 0;
+    line-height: 1.45;
+}
+
+.kommentar-box {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--panel);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
+    padding: 12px;
+    margin-bottom: 10px;
+    max-width: 980px;
+}
+
+textarea,
+button {
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+textarea {
+    width: 100%;
+    max-width: 980px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fffdf8;
+    color: #111;
+    padding: 8px;
+}
+
+button {
+    border: 1px solid var(--gold);
+    border-radius: 10px;
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: bold;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(245, 176, 39, 0.28);
+}
+
+.site-footer {
+    max-width: 1100px;
+    margin: 26px auto 0;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    text-align: center;
+}
+
+.footer-links a {
+    margin: 0 6px;
+}
+
+.footer-copy {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+@media (max-width: 560px) {
+    body {
+        padding: 14px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
