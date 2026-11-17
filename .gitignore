@@ -1,0 +1,19 @@
+# Lokale Konfiguration und Zugangsdaten
+.env
+.env.*
+!.env.example
+/include/config.local.php
+
+# Erzeugte Dateien und Datenbank-Backups
+**/data/backups/
+**/data/logs/
+**/data/exports/
+*.log
+
+# Editor und Betriebssystem
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store
+__pycache__/
+/dist/
