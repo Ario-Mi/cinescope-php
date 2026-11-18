@@ -17,3 +17,6 @@ Thumbs.db
 .DS_Store
 __pycache__/
 /dist/
+
+# Erzeugte statische Demo
+/demo/

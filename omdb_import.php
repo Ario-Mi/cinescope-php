@@ -443,6 +443,9 @@ if (!$istEingeloggt) {
 
     <?php if ($fehler !== ''): ?>
         <p class="fehler"><?php echo htmlspecialchars($fehler); ?></p>
+        <?php if ($istEingeloggt): ?>
+            <p class="meldung">Neue Filme, die OMDb noch nicht kennt, findest du oft im <a href="tmdb_import.php">TMDb-Import</a>.</p>
+        <?php endif; ?>
     <?php endif; ?>
 
     <?php if ($meldung !== ''): ?>

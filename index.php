@@ -29,6 +29,38 @@ if (!in_array($suchFeld, ['title', 'year', 'actor', 'director', 'genre'], true))
     $suchFeld = 'title';
 }
 
+// Sortierung aus URL lesen (?sort=rating_desc). Nur Werte aus der Liste sind erlaubt,
+// denn ORDER BY kann nicht als Parameter an PDO uebergeben werden.
+$sortierungen = [
+    'id_desc' => 'films.id DESC',
+    'title_asc' => 'films.title ASC',
+    'year_desc' => 'films.year DESC, films.title ASC',
+    'imdb_desc' => 'imdb_wert DESC, films.title ASC',
+    'rating_desc' => 'ohne_bewertung ASC, rating_avg DESC, films.title ASC',
+    'rating_asc' => 'ohne_bewertung ASC, rating_avg ASC, films.title ASC',
+];
+$sort = inputText($_GET, 'sort', 'id_desc');
+if (!isset($sortierungen[$sort])) {
+    $sort = 'id_desc';
+}
+$orderSql = $sortierungen[$sort];
+
+// Bewertungen pro Film werden vorher zusammengefasst. So vervielfachen die anderen
+// JOINs (z.B. Schauspieler bei der Suche) die Bewertungen nicht.
+$ratingJoin = "
+    LEFT JOIN (
+        SELECT films_id, AVG(rating) AS rating_avg, COUNT(id) AS rating_count
+        FROM ratings
+        GROUP BY films_id
+    ) AS bewertungen ON bewertungen.films_id = films.id
+";
+$listenFelder = "
+    films.id, films.title, films.year, films.poster,
+    bewertungen.rating_avg, bewertungen.rating_count,
+    (bewertungen.rating_avg IS NULL) AS ohne_bewertung,
+    CAST(NULLIF(films.imdbRating, 'N/A') AS DECIMAL(3,1)) AS imdb_wert
+";
+
 // 4) Aktuelle Seite aus URL holen (?seite=2)
 $seite = isset($_GET['seite']) ? (int) $_GET['seite'] : 1;
 if ($seite < 1) {
@@ -142,18 +174,25 @@ try {
         }
 
         $sql = "
-            SELECT DISTINCT films.id, films.title, films.year, films.poster
+            SELECT DISTINCT $listenFelder
             FROM films
             $joinSql
+            $ratingJoin
             WHERE $whereSql
-            ORDER BY films.id
+            ORDER BY $orderSql
             LIMIT $start,$proSeite
         ";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['q' => '%' . $suchbegriff . '%']);
         $filme = $stmt->fetchAll(PDO::FETCH_ASSOC);
     } else {
-        $sql = "SELECT id, title, year, poster FROM films ORDER BY id LIMIT $start,$proSeite";
+        $sql = "
+            SELECT $listenFelder
+            FROM films
+            $ratingJoin
+            ORDER BY $orderSql
+            LIMIT $start,$proSeite
+        ";
         $filme = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     }
 } catch (PDOException $e) {

@@ -10,6 +10,7 @@ startSecureSession();
 
 // Zentrale DB-Funktion laden
 require_once __DIR__ . '/include/db.php';
+require_once __DIR__ . '/include/tmdb.php';
 
 // Film-ID aus URL lesen
 $filmId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -19,6 +20,9 @@ $fehler = '';
 $meldung = '';
 $kommentare = [];
 $filmIstGespeichert = false;
+$ratingDurchschnitt = 0.0;
+$ratingAnzahl = 0;
+$eigeneBewertung = 0;
 
 if ($filmId < 1) {
     http_response_code(400);
@@ -114,6 +118,67 @@ if ($filmId < 1) {
             }
         }
 
+        // ==========================================
+        // Bewertung speichern oder aendern (1 bis 5 Sterne, nur eingeloggt)
+        // ==========================================
+        if (
+            $_SERVER['REQUEST_METHOD'] === 'POST'
+            && isset($_POST['action'])
+            && $_POST['action'] === 'add_rating'
+            && $fehler === ''
+        ) {
+            $istEingeloggt = isset($_SESSION['user_login']) && $_SESSION['user_login'] === true;
+            $userId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0;
+            $rating = (int) inputText($_POST, 'rating', '0');
+
+            if (!$istEingeloggt || $userId < 1) {
+                $fehler = 'Bitte zuerst einloggen, um den Film zu bewerten.';
+            } elseif ($rating < 1 || $rating > 5) {
+                $fehler = 'Bitte eine Bewertung von 1 bis 5 auswählen.';
+            } else {
+                // UNIQUE(users_id, films_id): pro Benutzer und Film gibt es nur eine Bewertung.
+                // Eine zweite Bewertung ersetzt deshalb die erste, statt eine neue Zeile anzulegen.
+                $ratingSql = "
+                    INSERT INTO ratings (users_id, films_id, rating)
+                    VALUES (:users_id, :films_id, :rating)
+                    ON DUPLICATE KEY UPDATE rating = :rating_update
+                ";
+                $ratingStmt = $pdo->prepare($ratingSql);
+                $ratingStmt->execute([
+                    'users_id' => $userId,
+                    'films_id' => $filmId,
+                    'rating' => $rating,
+                    'rating_update' => $rating
+                ]);
+                $meldung = 'Bewertung wurde gespeichert.';
+            }
+        }
+
+        // ==========================================
+        // Eigene Bewertung loeschen
+        // ==========================================
+        if (
+            $_SERVER['REQUEST_METHOD'] === 'POST'
+            && isset($_POST['action'])
+            && $_POST['action'] === 'delete_rating'
+            && $fehler === ''
+        ) {
+            $istEingeloggt = isset($_SESSION['user_login']) && $_SESSION['user_login'] === true;
+            $userId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0;
+
+            if (!$istEingeloggt || $userId < 1) {
+                $fehler = 'Bitte zuerst einloggen, um deine Bewertung zu löschen.';
+            } else {
+                // users_id UND films_id: Es wird nur die eigene Bewertung fuer diesen Film geloescht.
+                $deleteRating = $pdo->prepare('DELETE FROM ratings WHERE users_id = :users_id AND films_id = :films_id');
+                $deleteRating->execute([
+                    'users_id' => $userId,
+                    'films_id' => $filmId
+                ]);
+                $meldung = 'Bewertung wurde gelöscht.';
+            }
+        }
+
         // Detail + JOIN + COUNT in einer Abfrage
         $sql = "
             SELECT
@@ -127,6 +192,7 @@ if ($filmId < 1) {
                 films.language,
                 films.country,
                 films.imdbRating,
+                films.trailer_key,
                 GROUP_CONCAT(DISTINCT genres.genre SEPARATOR ', ') AS genres,
                 GROUP_CONCAT(DISTINCT directors.director SEPARATOR ', ') AS directors,
                 GROUP_CONCAT(DISTINCT writers.writer SEPARATOR ', ') AS writers,
@@ -152,7 +218,8 @@ if ($filmId < 1) {
                 films.plot,
                 films.language,
                 films.country,
-                films.imdbRating
+                films.imdbRating,
+                films.trailer_key
         ";
 
         $stmt = $pdo->prepare($sql);
@@ -162,6 +229,19 @@ if ($filmId < 1) {
         if (!$film) {
             $fehler = 'Film nicht gefunden.';
         } else {
+            // Trailer einmalig bei TMDb suchen, wenn noch nie gesucht wurde (NULL).
+            // Ein leerer Text bedeutet "gesucht, aber keinen Trailer gefunden"; dann fragen
+            // wir TMDb nicht bei jedem Seitenaufruf erneut.
+            if ($film['trailer_key'] === null && tmdbApiKey() !== '') {
+                $gefundenerKey = tmdbFindeTrailerKey((string) $film['title'], (string) $film['year']);
+                $trailerUpdate = $pdo->prepare('UPDATE films SET trailer_key = :trailer_key WHERE id = :id');
+                $trailerUpdate->execute([
+                    'trailer_key' => $gefundenerKey,
+                    'id' => $filmId
+                ]);
+                $film['trailer_key'] = $gefundenerKey;
+            }
+
             // Speichern-Status holen (damit wir im Button den Status zeigen koennen)
             if (isset($_SESSION['user_login']) && $_SESSION['user_login'] === true) {
                 $userId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : 0;
@@ -179,8 +259,23 @@ if ($filmId < 1) {
                         'films_id' => $filmId
                     ]);
                     $filmIstGespeichert = (bool) $savedCheck->fetch();
+
+                    // Eigene Bewertung laden, damit die Sterne im Formular markiert sind.
+                    $ownRating = $pdo->prepare('SELECT rating FROM ratings WHERE users_id = :users_id AND films_id = :films_id LIMIT 1');
+                    $ownRating->execute([
+                        'users_id' => $userId,
+                        'films_id' => $filmId
+                    ]);
+                    $eigeneBewertung = (int) $ownRating->fetchColumn();
                 }
             }
+
+            // Durchschnitt und Anzahl aller Bewertungen fuer diesen Film
+            $ratingInfo = $pdo->prepare('SELECT AVG(rating) AS durchschnitt, COUNT(id) AS anzahl FROM ratings WHERE films_id = :films_id');
+            $ratingInfo->execute(['films_id' => $filmId]);
+            $ratingZeile = $ratingInfo->fetch(PDO::FETCH_ASSOC);
+            $ratingDurchschnitt = (float) ($ratingZeile['durchschnitt'] ?? 0);
+            $ratingAnzahl = (int) ($ratingZeile['anzahl'] ?? 0);
 
             // ==========================================
             // Kommentare zum Film holen

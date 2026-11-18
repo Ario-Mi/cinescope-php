@@ -47,25 +47,46 @@ try {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?php echo htmlspecialchars($siteName); ?> - Start</title>
-    <link rel="stylesheet" href="css/index.css?v=7">
+    <link rel="stylesheet" href="css/index.css?v=2">
 </head>
 <body>
     <?php require __DIR__ . '/views/partials/nav.php'; ?>
     <main class="page-shell start-page-shell">
     <?php if (isset($_SESSION['user_login']) && $_SESSION['user_login'] === true): ?>
-        <div class="user-box">
-            <p>
-                Eingeloggt als:
+        <div class="start-login-box">
+            <div class="start-login-name">
+                <span>Eingeloggt als</span>
                 <strong><?php echo htmlspecialchars($_SESSION['user_alias'] ?? ''); ?></strong>
-            </p>
-            <p><a href="index.php">Zum Filmbereich</a></p>
-            <form method="post" action="start.php" class="logout-form"><?php echo csrfField(); ?><input type="hidden" name="action" value="user_logout"><button type="submit">Abmelden</button></form>
+            </div>
+            <div class="start-login-actions">
+                <a href="index.php">Zum Filmbereich</a>
+                <a href="profile.php">Mein Profil</a>
+                <form method="post" action="start.php" class="logout-form"><?php echo csrfField(); ?><input type="hidden" name="action" value="user_logout"><button type="submit">Abmelden</button></form>
+            </div>
         </div>
     <?php endif; ?>
 
-<section class="hero-box">
-            <h1><?php echo htmlspecialchars($siteName); ?></h1>
-            <p>Willkommen im Filmportal.</p>
+        <section class="hero-box start-hero">
+            <div class="start-hero-text">
+                <p class="start-label">Filmportal</p>
+                <h1><?php echo htmlspecialchars($siteName); ?></h1>
+                <p>
+                    Entdecke Filme, speichere deine Favoriten,
+                    bewerte sie mit Sternen und schaue Trailer direkt auf der Seite.
+                </p>
+                <div class="start-hero-actions">
+                    <a href="index.php">Filme ansehen</a>
+                    <?php if (!isset($_SESSION['user_login']) || $_SESSION['user_login'] !== true): ?>
+                        <a href="register.php">Jetzt registrieren</a>
+                    <?php else: ?>
+                        <a href="profile.php">Mein Profil</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <div class="start-hero-info">
+                <strong><?php echo (int) $gesamt; ?></strong>
+                <span>Filme in der Datenbank</span>
+            </div>
         </section>
 
         <?php if (!empty($startFilme)): ?>
