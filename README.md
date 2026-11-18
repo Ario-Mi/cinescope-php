@@ -2,6 +2,16 @@
 
 Ein Filmportal mit PHP und MySQL, eigenständig entwickelt während meiner Umschulung zum Fachinformatiker für Anwendungsentwicklung bei CBW. CineScope verbindet eine lokale Filmdatenbank mit der OMDb API und zeigt die Verarbeitung von Benutzereingaben, relationalen Daten und JSON/XML in einer Webanwendung.
 
+## Vorschau
+
+![Startseite von CineScope nach der Anmeldung](docs/screenshots/start.png)
+
+![Detailansicht eines Films mit Daten aus der OMDb API](docs/screenshots/film.png)
+
+![Trailer im Overlay auf der Detailseite](docs/screenshots/trailer.png)
+
+Die Filmplakate und Trailer stammen von externen Quellen und gehören den jeweiligen Rechteinhabern (siehe [ASSETS.md](docs/ASSETS.md)).
+
 ## Funktionen
 
 - Filmsuche nach Titel, Jahr, Schauspieler, Regie und Genre
