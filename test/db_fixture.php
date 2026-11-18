@@ -33,7 +33,7 @@ if (($argv[1] ?? '') === 'create') {
 } elseif (($argv[1] ?? '') === 'snapshot') {
     $pdo->exec("USE `$name`");
     $snapshot = [];
-    foreach (['users', 'films', 'comments', 'saved_films', 'messages'] as $table) {
+    foreach (['users', 'films', 'comments', 'saved_films', 'messages', 'ratings'] as $table) {
         $snapshot[$table] = $pdo->query("SELECT * FROM `$table`")->fetchAll(PDO::FETCH_ASSOC);
     }
     echo json_encode($snapshot);

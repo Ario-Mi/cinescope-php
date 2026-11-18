@@ -20,7 +20,9 @@
     <?php endif; ?>
 
     <?php if (isset($_SESSION['user_login']) && $_SESSION['user_login'] === true): ?>
+        <a href="profile.php">Profil</a>
         <a href="omdb_import.php">OMDb API</a>
+        <a href="tmdb_import.php">TMDb API</a>
         <a href="omdb_datei_import.php">OMDb Datei</a>
         <form method="post" action="start.php" class="logout-form"><?php echo csrfField(); ?><input type="hidden" name="action" value="user_logout"><button type="submit">Abmelden</button></form>
     <?php endif; ?>

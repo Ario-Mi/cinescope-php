@@ -252,3 +252,8 @@ pre {
 }
 
 
+
+/* Abmelden als POST-Formular (CSRF-geschuetzt), sieht aus wie ein Link */
+.logout-form{display:inline;margin:0}
+.top-nav .logout-form button{border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--gold);font-weight:normal;padding:7px 13px;box-shadow:none;font-size:inherit;font-family:inherit}
+.top-nav .logout-form button:hover{background:rgba(245,176,39,0.17)}

@@ -35,7 +35,7 @@ class SecurityChecks(unittest.TestCase):
         )
         env = dict(os.environ, ADMIN_USERNAME='security-test',
                    ADMIN_PASSWORD_HASH=result.stdout,
-                   DB_NAME=cls.server_database(), OMDB_API_KEY='')
+                   DB_NAME=cls.server_database(), OMDB_API_KEY='', TMDB_API_KEY='')
         if os.environ.get('RUN_LIVE_OMDB') == '1':
             env.pop('OMDB_API_KEY', None)
         cls.exports = tempfile.TemporaryDirectory(prefix='cinescope-exports-')
@@ -90,7 +90,8 @@ class SecurityChecks(unittest.TestCase):
         token = self.token()
         for path in ('/login.php', '/register.php', '/index.php', '/start.php',
                      '/film.php?id=1', '/contact.php', '/omdb_import.php',
-                     '/omdb_datei_import.php', '/admin/index.php'):
+                     '/omdb_datei_import.php', '/admin/index.php',
+                     '/profile.php', '/tmdb_import.php'):
             for data in ({}, {'csrf_token': 'wrong'}, {'csrf_token[]': token}):
                 with self.subTest(path=path, data=data):
                     self.assertEqual(self.request(path, data)[0], 403)

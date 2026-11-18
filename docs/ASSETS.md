@@ -1,6 +1,7 @@
 # Bild- und Datenquellen
 
 - Filmdaten und Online-Poster-URLs werden über die OMDb API bezogen.
+- Für Trailer und den TMDb-Import nutzt CineScope die TMDb API. Dieses Projekt nutzt die TMDb API, ist aber nicht von TMDb unterstützt oder zertifiziert. Trailer werden als YouTube-Video eingebettet (youtube-nocookie.com) und gehören den jeweiligen Rechteinhabern.
 - Die lokalen SQL-Beispieldaten verweisen auf externe Poster bei `image.tmdb.org`.
 - `bilder/placeholder.svg` ist die im Projekt enthaltene Ersatzgrafik.
 - `bilder/logo_varianten/logo_1_clean.png` wurde aus dem ursprünglichen Projekt übernommen. Ein gesonderter Herkunftsnachweis liegt im Projekt nicht vor.

@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS films_actors;
 DROP TABLE IF EXISTS films_writers;
 DROP TABLE IF EXISTS films_directors;
 DROP TABLE IF EXISTS films_genres;
+DROP TABLE IF EXISTS ratings;
 DROP TABLE IF EXISTS saved_films;
 DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS messages;
@@ -41,6 +42,8 @@ CREATE TABLE IF NOT EXISTS films
 (
     id INT PRIMARY KEY AUTO_INCREMENT,
     imdbID VARCHAR(20) NOT NULL,
+    -- TMDb-ID: nur bei Filmen aus dem TMDb-Import gesetzt
+    tmdbID VARCHAR(20) NULL,
     title VARCHAR(200) NOT NULL,
     year VARCHAR(20),
     runtime VARCHAR(40),
@@ -49,7 +52,10 @@ CREATE TABLE IF NOT EXISTS films
     language VARCHAR(200),
     country VARCHAR(200),
     imdbRating VARCHAR(10),
-    UNIQUE (imdbID)
+    -- YouTube-Key des Trailers. NULL = noch nicht gesucht, '' = kein Trailer gefunden
+    trailer_key VARCHAR(30) NULL,
+    UNIQUE (imdbID),
+    UNIQUE (tmdbID)
 );
 
 -- Stammtabellen
@@ -130,6 +136,20 @@ CREATE TABLE IF NOT EXISTS saved_films
     films_id INT NOT NULL,
     gespeichert_am DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (users_id, films_id),
+    FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (films_id) REFERENCES films(id) ON DELETE CASCADE
+);
+
+-- Bewertungen: 1 bis 5 Sterne, pro User und Film genau eine Bewertung
+CREATE TABLE IF NOT EXISTS ratings
+(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    users_id INT NOT NULL,
+    films_id INT NOT NULL,
+    rating TINYINT NOT NULL,
+    erstellt_am DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (users_id, films_id),
+    CHECK (rating BETWEEN 1 AND 5),
     FOREIGN KEY (users_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (films_id) REFERENCES films(id) ON DELETE CASCADE
 );

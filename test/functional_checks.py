@@ -112,6 +112,30 @@ class FunctionalChecks(SecurityChecks):
         self.post(path, action='save_film')
         saved = [row for row in self.snapshot()['saved_films'] if row['users_id'] == user['id']]
         self.assertEqual(len(saved), 1)
+        # Ratings: one row per user and film, a second vote replaces the first.
+        for value in ('4', '2'):
+            self.post(path, action='add_rating', rating=value)
+        ratings = [row for row in self.snapshot()['ratings'] if row['users_id'] == user['id']]
+        self.assertEqual([int(row['rating']) for row in ratings], [2])
+        for invalid in ('0', '6', 'abc'):
+            _, body, _, _ = self.post(path, action='add_rating', rating=invalid)
+            self.assertIn('von 1 bis 5', body)
+        self.assertIn('2,0 / 5', self.request(path)[1])
+        self.assertIn('2,0 / 5', self.request('/index.php?q=Matrix')[1])
+        for sort in ('rating_desc', 'rating_asc', 'imdb_desc', 'title_asc', 'year_desc', 'unknown'):
+            self.assertEqual(self.request('/index.php?sort=' + sort)[0], 200)
+        # Profile lists own data and only deletes own rows.
+        body = self.request('/profile.php')[1]
+        self.assertIn('The Matrix', body)
+        self.assertIn('Meine Bewertungen', body)
+        self.post('/profile.php', action='delete_rating', film_id=film_id)
+        self.assertFalse(any(row['users_id'] == user['id'] for row in self.snapshot()['ratings']))
+        self.post(path, action='add_rating', rating='5')
+        _, body, _, _ = self.post('/profile.php', action='change_password', altes_passwort='wrong password',
+                                  neues_passwort='Another password 123')
+        self.assertIn('nicht richtig', body)
+        self.assertIn('TMDB_API_KEY', self.request('/tmdb_import.php')[1])
+
         comment = '<script>alert("test")</script> Functional comment'
         self.post(path, action='add_comment', kommentar=comment)
         body = self.request(path)[1]
@@ -128,6 +152,8 @@ class FunctionalChecks(SecurityChecks):
 
         self.post('/start.php', action='user_logout')
         self.assertNotIn('name="action" value="add_comment"', self.request(path)[1])
+        self.assertIn('Bitte zuerst einloggen', self.request('/profile.php')[1])
+        self.assertNotIn('name="action" value="add_rating"', self.request(path)[1])
         before_count = len(self.snapshot()['comments'])
         token = self.token('/login.php')
         self.assertEqual(self.request(path, dict(csrf_token=token, action='add_comment',

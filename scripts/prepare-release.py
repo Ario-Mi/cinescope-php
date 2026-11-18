@@ -8,9 +8,9 @@ ROOT = Path(__file__).resolve().parents[1]
 ARCHIVE = ROOT / 'dist/cinescope-php.zip'
 RELEASE = ROOT / 'dist/cinescope-php'
 EXCLUDED = {'gruppe3', '.git', '.agents', '.codex', '.aws', '.idea', '.vscode',
-            '__pycache__', 'dist', 'backups', 'logs', 'exports'}
+            '__pycache__', 'dist', 'backups', 'logs', 'exports', 'demo'}
 ALLOWED = {'.php', '.css', '.js', '.sql', '.json', '.xml', '.md', '.txt', '.svg',
-           '.png', '.jpg', '.jpeg', '.webp', '.drawio', '.html', '.bat', '.py'}
+           '.png', '.jpg', '.jpeg', '.webp', '.drawio', '.html', '.bat', '.py', '.yml'}
 
 
 def release_files():
