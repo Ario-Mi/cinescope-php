@@ -1,0 +1,88 @@
+name: Tests und Demo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+      DB_NAME: cinescope
+      DB_USER: root
+      DB_PASSWORD: root
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP einrichten
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: pdo_mysql, mbstring, dom, simplexml
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sicherheitstests (ohne Datenbank)
+        run: python test/security_checks.py
+        env:
+          PHP_BINARY: php
+
+      - name: Datenbank mit Schema und Beispieldaten anlegen
+        run: |
+          mysql -h 127.0.0.1 -uroot -proot < data/sql/schema.sql
+          mysql -h 127.0.0.1 -uroot -proot < data/sql/seed.sql
+
+      - name: PHP-Server starten
+        run: |
+          php -d display_errors=0 -d session.save_path=/tmp -S 127.0.0.1:8000 -t . > /tmp/php-server.log 2>&1 &
+          sleep 2
+        env:
+          # Optional: Repository-Secrets fuer mehr Demo-Filme und Trailer
+          OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+
+      - name: Statische Demo erzeugen
+        run: python scripts/build_demo.py --base http://127.0.0.1:8000/ --out demo
+        env:
+          OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
+
+      - name: Pages konfigurieren
+        uses: actions/configure-pages@v5
+
+      - name: Nur den Demo-Ordner hochladen
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: demo
+
+      - name: Veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v4
